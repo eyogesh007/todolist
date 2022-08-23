@@ -1,52 +1,129 @@
-import react,{useState,useEffect} from 'react';
+import {useState} from 'react';
+
 import {Link,Navigate,useNavigate} from 'react-router';
+
 import axios from 'axios';
-const Login = ()=>{
 
-    let navigate=useNavigate();
-    axios.get('https://login-fd8d7-default-rtdb.firebaseio.com/info.json').then(res=>setRes(res.data))
-    const[data,setData]=useState({
-      username:"",
-      password:""
-    })
-    const[res,setRes]=useState({
-    })
-    const {username,password}=data;
+import todo from './todo.js'
 
-    function loginfun(e){
-      var name=e.target.name;
-      var value=e.target.value;
-      setData({...data,[name]:[value]});
+import Signup from './signup.js'
+
+import Pagenotfound from './Pagenotfound.js';
+
+import './login.css';
+
+
+
+//const PORT = process.env.PORT || 5000;
+
+
+
+const Login = (parms)=>{
+
+  const[token,setToken]=useState(null)
+
+  let navigate=useNavigate();
+
+  const[data,setData]=useState({
+
+   username:"",
+
+   password:""
+
+  })
+
+
+
+   
+
+  const {username,password}=data;
+
+
+
+  function loginfun(e){
+
+   var name=e.target.name;
+
+   var value=e.target.value;
+
+   setData({...data,[name]:value});
+
+  }
+
+
+
+  function backtosignup(){
+
+   navigate('/');
+
+  }
+
+
+
+
+
+  async function submitform (e){
+
+   e.preventDefault();
+
+   await axios.post(`https://todolistapi.zebsy.in/login`,data).then(
+
+    res => {
+
+    setToken(res.data);
+
+    localStorage.setItem("token",res.data);}
+
+  )
+
+  if(localStorage.getItem('token')){  
+
+   navigate('/todo');
+
     }
 
-    function validate(values){
-      if(username[0]==(res[values].username[0]) && password[0]==(res[values].password[0]))
-      {navigate(`/todo/${username}`)}
-      else
-      console.log("not correct passowrd")
-    }
+    else
 
-    function submitform(e){
-      e.preventDefault();
-      console.log(data);
-      Object.keys(res).forEach(validate)
+    navigate('/')
 
-    }
+  }
 
-    return(
-      <div>
-      <center>
-        <form onSubmit={submitform}>
-          <input onChange={loginfun} type="text" name="username" placeholder="username" value={username}/>
-          <br/>
-        <input onChange={loginfun} type="password" name="password" placeholder="password" value={password}/>
-          <br/>
-        <input type="submit" onClick={submitform}/>
-        </form>
-        </center>
-      </div>
-    );
+
+
+  return(
+
+   <div>
+
+   <center>
+
+    <form className="loginform" onSubmit={submitform}>
+
+     <input className="logininput" onChange={loginfun} type="text" name="username" placeholder="username" value={username}/>
+
+     <br/>
+
+    <input className="logininput" onChange={loginfun} type="password" name="password" placeholder="password" value={password}/>
+
+     <br/>
+
+    <input className="logininput" type="submit" onClick={submitform}/>
+
+    </form>
+
+    <br/>
+
+     <button className="logininput" onClick={backtosignup}>don't have an account</button>
+
+    </center>
+
+   </div>
+
+  );
+
+
 
 }
+
+
 
 export default Login;
